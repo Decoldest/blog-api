@@ -3,7 +3,10 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-const mongoose = require("mongoose")
+require("dotenv").config();
+
+
+const mongoose = require("mongoose");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -11,6 +14,11 @@ const postsRouter = require("./routes/postsRouter");
 const commentRouter = require("./routes/commentRouter");
 
 var app = express();
+
+main().catch((err) => console.log(err));
+async function main() {
+  await mongoose.connect(process.env.DB_STRING)
+}
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
