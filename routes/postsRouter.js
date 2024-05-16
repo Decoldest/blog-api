@@ -1,9 +1,12 @@
 var express = require("express");
 var router = express.Router();
+const postController = require("../controllers/postController");
 
 /* GET posts page. */
-router.get("/", function (req, res, next) {
-  res.send("posts");
-});
+router.get("/", postController.post_list);
+
+/* GET single post page. */
+router.get("/:postId", postController.post_detail);
+
 
 module.exports = router;

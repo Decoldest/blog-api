@@ -1,9 +1,11 @@
 var express = require("express");
 var router = express.Router();
+const commentController = require("../controllers/commentController");
 
-/* GET home page. */
-router.get("/", function (req, res, next) {
-  res.send("comments");
-});
+/* GET comments page. */
+router.get("/", commentController.comment_list);
+
+/* GET single comment page. */
+router.get("/:commentId", commentController.comment_detail);
 
 module.exports = router;
