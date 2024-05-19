@@ -1,12 +1,11 @@
 var express = require("express");
-var router = express.Router();
+var posts = express.Router();
 const postController = require("../controllers/postController");
 
 /* GET posts page. */
-router.get("/", postController.post_list);
+posts.get("/", postController.post_list);
 
 /* GET single post page. */
-router.get("/:postId", postController.post_detail);
+posts.get("/:postId", postController.post_detail);
 
-
-module.exports = router;
+module.exports = posts;

@@ -5,8 +5,9 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 require("dotenv").config();
 
-
 const mongoose = require("mongoose");
+const passport = require("passport");
+const passportJWTStrategy = require("passport-jwt").Strategy;
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -17,7 +18,7 @@ var app = express();
 
 main().catch((err) => console.log(err));
 async function main() {
-  await mongoose.connect(process.env.DB_STRING)
+  await mongoose.connect(process.env.DB_STRING);
 }
 
 // view engine setup
