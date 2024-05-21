@@ -1,6 +1,8 @@
 const Post = require("../models/post");
 const Comment = require("../models/comment");
 const asyncHandler = require("express-async-handler");
+const jwt = require("jsonwebtoken");
+const verifyToken = require("../config/passport");
 
 //GET request for all posts
 exports.post_list = asyncHandler(async (req, res, next) => {

@@ -1,9 +1,11 @@
+require("dotenv").config();
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const User = require("../models/user");
+const bcrypt = require("bcryptjs");
 
 passport.use(
-  "signup",
+  "sign-up",
   new LocalStrategy(
     {
       usernameField: "username",
@@ -11,7 +13,7 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, username, password, done) => {
-      const { isAuthor } = req.body.isAuthor;
+      const { isAuthor } = req.body;
       try {
         const user = await User.create({ username, password, isAuthor });
 
@@ -50,15 +52,39 @@ passport.use(
   ),
 );
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
+const JWTstrategy = require("passport-jwt").Strategy;
+const ExtractJWT = require("passport-jwt").ExtractJwt;
 
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findById(id);
-    done(null, user);
-  } catch (err) {
-    done(err);
+passport.use(
+  new JWTstrategy(
+    {
+      secretOrKey: process.env.JWT_SECRET,
+      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+    },
+    async (token, done) => {
+      try {
+        return done(null, token.user);
+      } catch (error) {
+        done(error);
+      }
+    },
+  ),
+);
+
+function verifyToken(req, res, next) {
+  const bearerHeader = req.headers["authorization"];
+
+  if (typeof bearerHeader !== "undefined") {
+    //Get token by splitting header
+    const bearerToken = bearerHeader.split(" ")[1];
+
+    //Set token and call next
+    req.token = bearerToken;
+    next();
+  } else {
+    //User is not authorized
+    req.json({ message: "Forbidden" });
   }
-});
+}
+
+exports.verifyToken = verifyToken;
