@@ -31,7 +31,7 @@ router.post("/sign-up", (req, res, next) => {
 router.post("/login", async (req, res, next) => {
   passport.authenticate("login", async (err, user, info) => {
     if (err || !user) {
-      return res.status(400).json({ message: "something went wrong", info });
+      return res.status(400).json({ message: "Authentication failed", info });
     }
     req.login(user, { session: false }, (error) => {
       if (error) return error;
@@ -44,5 +44,20 @@ router.post("/login", async (req, res, next) => {
     });
   })(req, res, next);
 });
+
+router.get(
+  "/protected",
+  passport.authenticate("jwt", { session: false }),
+  (req, res, next) => {
+    return res.status(200).send("protected");
+  },
+  (err, req, res, next) => {
+    if (err.name === "UnauthorizedError") {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    // Handle other errors if needed
+    next(err);
+  },
+);
 
 module.exports = router;
