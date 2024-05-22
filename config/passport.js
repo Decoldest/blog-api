@@ -71,20 +71,20 @@ passport.use(
   ),
 );
 
-function verifyToken(req, res, next) {
-  const bearerHeader = req.headers["authorization"];
+// function verifyToken(req, res, next) {
+//   const bearerHeader = req.headers["authorization"];
 
-  if (typeof bearerHeader !== "undefined") {
-    //Get token by splitting header
-    const bearerToken = bearerHeader.split(" ")[1];
+//   if (typeof bearerHeader !== "undefined") {
+//     //Get token by splitting header
+//     const bearerToken = bearerHeader.split(" ")[1];
 
-    //Set token and call next
-    req.token = bearerToken;
-    next();
-  } else {
-    //User is not authorized
-    req.json({ message: "Forbidden" });
-  }
-}
+//     //Set token and call next
+//     req.token = bearerToken;
+//     next();
+//   } else {
+//     //User is not authorized
+//     req.json({ message: "Forbidden" });
+//   }
+// }
 
-exports.verifyToken = verifyToken;
+// exports.verifyToken = verifyToken;

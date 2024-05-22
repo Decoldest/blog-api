@@ -21,22 +21,44 @@ posts.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
   async (req, res, next) => {
-    verifyIsPostAuthor(req.user._id, req.params.id);
+    console.log(req.user._id);
+    console.log(req.params.id);
+
+    // res.json({ messsage: "good" });
+
+    verifyIsPostAuthor(req, res, next);
+  },
+  async (req, res, next) => {
+    res.json({ messsage: "good" });
   },
   // postController.posts_update,
 );
 
-async function verifyIsPostAuthor(req, res, next, userID, postId) {
-  const post = await Post.findById(postId);
+const mongoose = require("mongoose");
 
-  if (!post) {
-    return new Error("No Post");
+async function verifyIsPostAuthor(req, res, next) {
+  const [userID, postID] = [req.user._id, req.params.id];
+  try {
+    if (!mongoose.Types.ObjectId.isValid(postID))
+      return res.status(404).json({ msg: `No task with id :${postID}` });
+
+    const post = await Post.findById(postID);
+
+    if (!post) {
+      return res.status(404).json({ message: "No Post found" });
+    }
+
+    const authorID = post.author.toString(); // Ensure authorID is in string format
+
+    if (userID.toString() === authorID) {
+      next(); // Proceed to the next middleware or route handler
+    } else {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+  } catch (error) {
+    console.error("Error verifying post author:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
-
-  const authorID = post.author;
-  console.log(userID);
-  console.log(authorID);
-  res.json({ userID, authorID });
 }
 
 module.exports = posts;
