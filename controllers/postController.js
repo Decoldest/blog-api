@@ -81,4 +81,3 @@ exports.posts_update = asyncHandler(async (req, res, next) => {
   const updatedPost = await Post.findByIdAndUpdate(req.params.id, post, {});
   res.json({ message: "", updatedPost });
 });
-

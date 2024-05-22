@@ -20,11 +20,13 @@ posts.post(
 posts.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
-  verifyIsPostAuthor(req.user._id, req.params.id),
-  postController.posts_update,
+  async (req, res, next) => {
+    verifyIsPostAuthor(req.user._id, req.params.id);
+  },
+  // postController.posts_update,
 );
 
-async function verifyIsPostAuthor(userID, postId) {
+async function verifyIsPostAuthor(req, res, next, userID, postId) {
   const post = await Post.findById(postId);
 
   if (!post) {
@@ -34,7 +36,7 @@ async function verifyIsPostAuthor(userID, postId) {
   const authorID = post.author;
   console.log(userID);
   console.log(authorID);
-  next();
+  res.json({ userID, authorID });
 }
 
 module.exports = posts;
