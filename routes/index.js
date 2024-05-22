@@ -40,7 +40,7 @@ router.post("/login", async (req, res, next) => {
       const token = jwt.sign({ user: body }, process.env.JWT_SECRET, {
         expiresIn: "1h",
       });
-      return res.json({ token });
+      return res.json({ token, user });
     });
   })(req, res, next);
 });
@@ -49,15 +49,19 @@ router.get(
   "/protected",
   passport.authenticate("jwt", { session: false }),
   (req, res, next) => {
-    return res.status(200).send("protected");
-  },
-  (err, req, res, next) => {
-    if (err.name === "UnauthorizedError") {
+    if (req.user) {
+      const user = req.user;
+      return res.status(200).json({ message: "protected", user });
+    } else {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    // Handle other errors if needed
-    next(err);
   },
+  // (err, req, res, next) => {
+  //   if (err.name === "UnauthorizedError") {
+  //     return res.status(401).json({ message: "Unauthorized" });
+  //   }
+  //   next(err);
+  // },
 );
 
 module.exports = router;

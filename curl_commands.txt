@@ -1,0 +1,14 @@
+curl -X POST http://localhost:3000/login \
+-H "Content-Type: application/json" \
+-d '{"username":"newUser", "password":"newPassword"}'
+
+
+curl -X GET http://localhost:3000/protected \
+-H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY2NGQyNzRhOTZkYjgxZjFlMzM0NTE4ZiIsInVzZXJuYW1lIjoibmV3VXNlciJ9LCJpYXQiOjE3MTY0MDAzODQsImV4cCI6MTcxNjQwMzk4NH0.dSZBxKFY2r7U7ZeXiei01czVTN0eCAOpZh6sFI3EoYg"
+
+
+curl -X POST http://localhost:3000/posts \
+-H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY2NGQyNzRhOTZkYjgxZjFlMzM0NTE4ZiIsInVzZXJuYW1lIjoibmV3VXNlciJ9LCJpYXQiOjE3MTY0MDAzODQsImV4cCI6MTcxNjQwMzk4NH0.dSZBxKFY2r7U7ZeXiei01czVTN0eCAOpZh6sFI3EoYg" \
+-H "Content-Type: application/json" \
+-d '{"title": "My New Post", "text": "This is the content of my new post", "author": "664d274a96db81f1e334518f"}'
+
