@@ -24,14 +24,12 @@ posts.put(
     console.log(req.user._id);
     console.log(req.params.id);
 
-    // res.json({ messsage: "good" });
-
     verifyIsPostAuthor(req, res, next);
   },
-  async (req, res, next) => {
-    res.json({ messsage: "good" });
-  },
-  // postController.posts_update,
+  // async (req, res, next) => {
+  //   res.json({ messsage: "good" });
+  // },
+  postController.posts_update,
 );
 
 const mongoose = require("mongoose");
@@ -39,6 +37,7 @@ const mongoose = require("mongoose");
 async function verifyIsPostAuthor(req, res, next) {
   const [userID, postID] = [req.user._id, req.params.id];
   try {
+    //Check if id params is valid before querying database
     if (!mongoose.Types.ObjectId.isValid(postID))
       return res.status(404).json({ msg: `No task with id :${postID}` });
 
