@@ -18,6 +18,15 @@ comments.delete(
   commentController.comment_delete,
 );
 
+comments.put(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res, next) => {
+    verifyIsCommentAuthorOrAdmin(req, res, next);
+  },
+  commentController.comment_update,
+);
+
 //Check authorization for updating/deleting; calls next only if user is author or admin
 async function verifyIsCommentAuthorOrAdmin(req, res, next) {
   const [userID, commentID] = [req.user._id, req.params.id];
