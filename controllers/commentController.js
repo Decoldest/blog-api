@@ -1,6 +1,6 @@
 const Comment = require("../models/comment");
 const User = require("../models/user");
-const Post = require("../models/comment");
+const Post = require("../models/post");
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 
@@ -39,9 +39,19 @@ exports.comment_post = [
     await comment.save();
 
     //Push comment onto correct comment comment array
-    const updatedPost = await Post.findByIdAndUpdate(req.body.postID, {
-      $push: { comments: comment._id },
-    });
+    const updatedPost = await Post.findByIdAndUpdate(
+      req.body.postID,
+      {
+        $push: { comments: comment._id },
+      },
+      { new: true },
+    );
+
+    if (!updatedPost) {
+      return res
+        .status(404)
+        .json({ message: "Error updating non-existant post" });
+    }
 
     res.json({ message: "New comment created", comment, updatedPost });
   }),
