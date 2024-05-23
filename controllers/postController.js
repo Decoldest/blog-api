@@ -57,7 +57,11 @@ exports.posts_delete = [
   asyncHandler(async (req, res, next) => {
     try {
       
-      await Post.findByIdAndDelete(req.params.id);
+      const post = await Post.findByIdAndDelete(req.params.id);
+      if (!post) {
+        return res.status(404).json({ message: "Comment not found" });
+      }
+
       res.json({ message: "Post Deleted" });
     } catch (error) {
       next(error);
@@ -95,6 +99,9 @@ exports.posts_update = [
           runValidators: true,
         },
       );
+      if (!updatedPost) {
+        return res.status(404).json({ message: "Post not found" });
+      }
 
       res.json({ message: "Updated post", updatedPost });
     } catch (error) {
