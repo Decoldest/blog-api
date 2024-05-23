@@ -9,7 +9,7 @@ const Post = require("../models/post");
 posts.get("/", postController.posts_list);
 
 /* GET single post page. */
-posts.get("/:postId", postController.posts_detail);
+posts.get("/:postID", postController.posts_detail);
 
 posts.post(
   "/",
@@ -18,7 +18,7 @@ posts.post(
 );
 
 posts.put(
-  "/:id",
+  "/:postID",
   passport.authenticate("jwt", { session: false }),
   async (req, res, next) => {
     verifyIsPostAuthorOrAdmin(req, res, next);
@@ -27,7 +27,7 @@ posts.put(
 );
 
 posts.delete(
-  "/:id",
+  "/:postID",
   passport.authenticate("jwt", { session: false }),
   async (req, res, next) => {
     verifyIsPostAuthorOrAdmin(req, res, next);
@@ -39,7 +39,7 @@ const mongoose = require("mongoose");
 
 //Check authorization for updating/deleting; calls next only if user is author or admin
 async function verifyIsPostAuthorOrAdmin(req, res, next) {
-  const [userID, postID] = [req.user._id, req.params.id];
+  const [userID, postID] = [req.user._id, req.params.postID];
 
   if (!mongoose.Types.ObjectId.isValid(postID))
     return res.status(404).json({ msg: `No task with id :${postID}` });

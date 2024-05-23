@@ -61,7 +61,7 @@ exports.comment_post = [
 exports.comment_delete = [
   asyncHandler(async (req, res, next) => {
     try {
-      const comment = await Comment.findByIdAndDelete(req.params.id);
+      const comment = await Comment.findByIdAndDelete(req.params.commentID);
 
       if (!comment) {
         return res.status(404).json({ message: "Comment not found" });
@@ -102,6 +102,8 @@ exports.comment_update = [
 
     const { text, postID } = req.body;
     const { commentID } = req.params;
+    console.log(req.params);
+    console.log(text, postID, commentID);
 
     const updatedComment = await Comment.findByIdAndUpdate(
       commentID,

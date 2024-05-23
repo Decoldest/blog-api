@@ -1,4 +1,5 @@
 const Post = require("../models/post");
+const Comment = require("../models/comment");
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 
@@ -11,7 +12,7 @@ exports.posts_list = asyncHandler(async (req, res, next) => {
 
 //GET request for single post
 exports.posts_detail = asyncHandler(async (req, res, next) => {
-  const post = await Post.findById(req.params.postId).populate("user").exec();
+  const post = await Post.findById(req.params.postID).populate("user").exec();
   res.json(post);
 });
 
@@ -56,11 +57,12 @@ exports.posts_create = [
 exports.posts_delete = [
   asyncHandler(async (req, res, next) => {
     try {
-      
-      const post = await Post.findByIdAndDelete(req.params.id);
+      const post = await Post.findByIdAndDelete(req.params.postID);
       if (!post) {
-        return res.status(404).json({ message: "Comment not found" });
+        return res.status(404).json({ message: "Post not found" });
       }
+
+      await Comment.deleteMany({ _id: { $in: post.comments } });
 
       res.json({ message: "Post Deleted" });
     } catch (error) {
@@ -89,10 +91,10 @@ exports.posts_update = [
 
     try {
       const { title, text } = req.body;
-      const { id } = req.params;
+      const { postID } = req.params;
 
       const updatedPost = await Post.findByIdAndUpdate(
-        id,
+        postID,
         { title, text },
         {
           new: true,

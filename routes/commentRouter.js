@@ -11,7 +11,7 @@ comments.post(
 );
 
 comments.delete(
-  "/:id",
+  "/:commentID",
   passport.authenticate("jwt", { session: false }),
   async (req, res, next) => {
     verifyIsCommentAuthorOrAdmin(req, res, next);
@@ -20,7 +20,7 @@ comments.delete(
 );
 
 comments.put(
-  "/:id",
+  "/:commentID",
   passport.authenticate("jwt", { session: false }),
   async (req, res, next) => {
     verifyIsCommentAuthorOrAdmin(req, res, next);
@@ -31,7 +31,7 @@ comments.put(
 const mongoose = require("mongoose");
 //Check authorization for updating/deleting; calls next only if user is author or admin
 async function verifyIsCommentAuthorOrAdmin(req, res, next) {
-  const [userID, commentID] = [req.user._id, req.params.id];
+  const [userID, commentID] = [req.user._id, req.params.commentID];
 
   if (!mongoose.Types.ObjectId.isValid(commentID))
     return res.status(404).json({ msg: `No task with id :${commentID}` });
