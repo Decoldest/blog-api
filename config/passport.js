@@ -13,9 +13,9 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, username, password, done) => {
-      const { isAuthor } = req.body;
+      const { isAdmin } = req.body;
       try {
-        const user = await User.create({ username, password, isAuthor });
+        const user = await User.create({ username, password, isAdmin });
 
         return done(null, user);
       } catch (error) {

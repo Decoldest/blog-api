@@ -35,11 +35,14 @@ router.post("/login", async (req, res, next) => {
     }
     req.login(user, { session: false }, (error) => {
       if (error) return error;
-
-      const body = { _id: user._id, username: user.username };
+      const body = {
+        _id: user._id,
+        username: user.username,
+      };
       const token = jwt.sign({ user: body }, process.env.JWT_SECRET, {
         expiresIn: "1h",
       });
+
       return res.json({ token, user });
     });
   })(req, res, next);

@@ -56,9 +56,9 @@ exports.posts_create = [
 //DELETE request to delete single post
 exports.posts_delete = [
   asyncHandler(async (req, res, next) => {
-    const user = req.user._id;
     try {
-      await Post.findByIdAndDelete(req.params.postId);
+      
+      await Post.findByIdAndDelete(req.params.id);
       res.json({ message: "Post Deleted" });
     } catch (error) {
       next(error);
@@ -87,14 +87,17 @@ exports.posts_update = [
     try {
       const { title, text } = req.body;
       const { id } = req.params;
-      const updateFields = { title, text };
 
-      const updatedPost = await Post.findByIdAndUpdate(id, updateFields, {
-        new: true,
-        runValidators: true,
-      });
+      const updatedPost = await Post.findByIdAndUpdate(
+        id,
+        { title, text },
+        {
+          new: true,
+          runValidators: true,
+        },
+      );
 
-      res.json({ message: "Update post", updatedPost });
+      res.json({ message: "Updated post", updatedPost });
     } catch (error) {
       res.status(500).json({ message: "Error updating post", error });
     }
