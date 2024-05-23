@@ -24,10 +24,15 @@ exports.comment_post = [
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
+    const author = await User.findOne({ username: req.user.username });
+
+    if (!author) {
+      return res.status(404).json({ message: "Comment author not found" });
+    }
 
     const comment = new Comment({
       text: req.body.text,
-      username: req.body.username,
+      author: author._id,
       date: new Date(),
     });
 

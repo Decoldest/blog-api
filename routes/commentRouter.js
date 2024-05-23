@@ -2,6 +2,7 @@ var express = require("express");
 var comments = express.Router();
 const commentController = require("../controllers/commentController");
 const passport = require("passport");
+const Comment = require("../models/comment");
 
 comments.post(
   "/",
@@ -27,6 +28,7 @@ comments.put(
   commentController.comment_update,
 );
 
+const mongoose = require("mongoose");
 //Check authorization for updating/deleting; calls next only if user is author or admin
 async function verifyIsCommentAuthorOrAdmin(req, res, next) {
   const [userID, commentID] = [req.user._id, req.params.id];
@@ -37,7 +39,7 @@ async function verifyIsCommentAuthorOrAdmin(req, res, next) {
   try {
     //Check if id params is valid before querying database
 
-    const comment = await Post.findById(commentID);
+    const comment = await Comment.findById(commentID);
 
     if (!comment) {
       return res.status(404).json({ message: "No Comment found" });
@@ -68,4 +70,4 @@ async function verifyIsAdmin(userID) {
   return user.isAdmin;
 }
 
-module.exports = router;
+module.exports = comments;

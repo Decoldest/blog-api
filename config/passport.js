@@ -15,6 +15,10 @@ passport.use(
     async (req, username, password, done) => {
       const { isAdmin } = req.body;
       try {
+        const checkUser = await User.findOne({ username: username });
+        if (checkUser) {
+          return done(null, false, { message: "Username taken" });
+        }
         const user = await User.create({ username, password, isAdmin });
 
         return done(null, user);
