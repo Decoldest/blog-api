@@ -4,16 +4,13 @@ const commentController = require("../controllers/commentController");
 const passport = require("passport");
 const Comment = require("../models/comment");
 const User = require("../models/user");
+const { authenticateJWT } = require("../config/passport");
 
-comments.post(
-  "/",
-  passport.authenticate("jwt", { session: false }),
-  commentController.comment_post,
-);
+comments.post("/", authenticateJWT, commentController.comment_post);
 
 comments.delete(
   "/:commentID",
-  passport.authenticate("jwt", { session: false }),
+  authenticateJWT,
   async (req, res, next) => {
     verifyIsCommentAuthorOrAdmin(req, res, next);
   },
@@ -22,11 +19,11 @@ comments.delete(
 
 comments.put(
   "/:commentID",
-  passport.authenticate("jwt", { session: false }),
+  authenticateJWT,
   async (req, res, next) => {
     try {
       verifyIsCommentAuthorOrAdmin(req, res, next);
-    }catch (error) {
+    } catch (error) {
       console.error("Error updating comment:", error);
       return res.status(401).json({ message: "Unauthorized" });
     }

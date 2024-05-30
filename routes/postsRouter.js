@@ -4,6 +4,7 @@ const postController = require("../controllers/postController");
 const passport = require("passport");
 const User = require("../models/user");
 const Post = require("../models/post");
+const { authenticateJWT } = require("../config/passport");
 
 /* GET posts page. */
 posts.get("/", postController.posts_list);
@@ -11,15 +12,11 @@ posts.get("/", postController.posts_list);
 /* GET single post page. */
 posts.get("/:postID", postController.posts_detail);
 
-posts.post(
-  "/",
-  passport.authenticate("jwt", { session: false }),
-  postController.posts_create,
-);
+posts.post("/", authenticateJWT, postController.posts_create);
 
 posts.put(
   "/:postID",
-  passport.authenticate("jwt", { session: false }),
+  authenticateJWT,
   async (req, res, next) => {
     verifyIsPostAuthorOrAdmin(req, res, next);
   },
@@ -28,7 +25,7 @@ posts.put(
 
 posts.delete(
   "/:postID",
-  passport.authenticate("jwt", { session: false }),
+  authenticateJWT,
   async (req, res, next) => {
     verifyIsPostAuthorOrAdmin(req, res, next);
   },

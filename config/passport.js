@@ -69,7 +69,6 @@ passport.use(
       try {
         if (!token.user) {
           return done(null, false, { message: "Unauthorized" });
-          console.log("noyyyyy");
         }
 
         return done(null, token.user); // Authorized
@@ -80,20 +79,15 @@ passport.use(
   ),
 );
 
-// function verifyToken(req, res, next) {
-//   const bearerHeader = req.headers["authorization"];
-
-//   if (typeof bearerHeader !== "undefined") {
-//     //Get token by splitting header
-//     const bearerToken = bearerHeader.split(" ")[1];
-
-//     //Set token and call next
-//     req.token = bearerToken;
-//     next();
-//   } else {
-//     //User is not authorized
-//     req.json({ message: "Forbidden" });
-//   }
-// }
-
-// exports.verifyToken = verifyToken;
+module.exports.authenticateJWT = function (req, res, next) {
+  passport.authenticate("jwt", { session: false }, (err, user, info) => {
+    if (err) {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    req.user = user;
+    next();
+  })(req, res, next);
+};
