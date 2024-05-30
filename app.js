@@ -5,10 +5,8 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 require("dotenv").config();
 
-
 const mongoose = require("mongoose");
-const passport = require("passport");
-const passportJWTStrategy = require("passport-jwt").Strategy;
+const cors = require("cors");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -16,6 +14,8 @@ const postsRouter = require("./routes/postsRouter");
 const commentRouter = require("./routes/commentRouter");
 
 var app = express();
+
+app.use(cors());
 
 main().catch((err) => console.log(err));
 async function main() {

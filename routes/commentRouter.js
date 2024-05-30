@@ -3,6 +3,7 @@ var comments = express.Router();
 const commentController = require("../controllers/commentController");
 const passport = require("passport");
 const Comment = require("../models/comment");
+const User = require("../models/user");
 
 comments.post(
   "/",
@@ -23,7 +24,12 @@ comments.put(
   "/:commentID",
   passport.authenticate("jwt", { session: false }),
   async (req, res, next) => {
-    verifyIsCommentAuthorOrAdmin(req, res, next);
+    try {
+      verifyIsCommentAuthorOrAdmin(req, res, next);
+    }catch (error) {
+      console.error("Error updating comment:", error);
+      return res.status(401).json({ message: "Unauthorized" });
+    }
   },
   commentController.comment_update,
 );
@@ -37,7 +43,7 @@ async function verifyIsCommentAuthorOrAdmin(req, res, next) {
     return res.status(404).json({ msg: `No task with id :${commentID}` });
 
   try {
-    //Check if id params is valid before querying database
+    //Check if commentID param is valid before querying database
 
     const comment = await Comment.findById(commentID);
 
@@ -53,7 +59,7 @@ async function verifyIsCommentAuthorOrAdmin(req, res, next) {
     ) {
       next(); //Authorized
     } else {
-      return res.status(403).json({ message: "Unauthorized" });
+      return res.status(403).json({ message: "Unauthorized request" });
     }
   } catch (error) {
     console.error("Error verifying comment author:", error);

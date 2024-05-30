@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const postSchema = new Schema({
   title: { type: String, required: true, minLength: 1, maxLength: 100 },
   text: { type: String, required: true, minLength: 1, maxLength: 2000 },
+  category: { type: String, minLength: 1 },
   author: { type: Schema.Types.ObjectId, ref: "User", required: false },
   comments: [{ type: Schema.Types.ObjectId, ref: "Comment", required: true }],
   published: { type: Boolean, default: false },

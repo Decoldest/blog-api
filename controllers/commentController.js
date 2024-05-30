@@ -6,7 +6,7 @@ const { body, validationResult } = require("express-validator");
 
 exports.comment_detail = asyncHandler(async (req, res, next) => {
   const comment = await Comment.findById(req.params.commentId)
-    .populate("user")
+    .populate("author")
     .exec();
   res.json(comment);
 });
@@ -67,7 +67,7 @@ exports.comment_delete = [
         return res.status(404).json({ message: "Comment not found" });
       }
 
-      //Pop comment from comment array
+      //Pull comment from a post comment array
       const updatedPost = await Post.findByIdAndUpdate(
         req.body.postID,
         {
@@ -102,9 +102,8 @@ exports.comment_update = [
 
     const { text, postID } = req.body;
     const { commentID } = req.params;
-    console.log(req.params);
-    console.log(text, postID, commentID);
 
+    //Update comment
     const updatedComment = await Comment.findByIdAndUpdate(
       commentID,
       { text },
@@ -114,7 +113,7 @@ exports.comment_update = [
       },
     );
     if (!updatedComment) {
-      return res.status(404).json({ message: "Commemnt not found" });
+      return res.status(404).json({ message: "Comment not found" });
     }
 
     //Push comment onto correct comment comment array
@@ -127,6 +126,6 @@ exports.comment_update = [
       { new: true },
     );
 
-    res.json({ message: "New comment created", updatedComment, updatedPost });
+    res.json({ message: "Comment updated", updatedComment, updatedPost });
   }),
 ];

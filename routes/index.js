@@ -10,10 +10,6 @@ router.get("/", function (req, res, next) {
   res.render("index", { title: "Express=" });
 });
 
-router.post("/test", (req, res) => {
-  res.send("Test route working!");
-});
-
 router.post("/sign-up", (req, res, next) => {
   passport.authenticate("sign-up", (err, user, info) => {
     if (err) {
@@ -59,12 +55,6 @@ router.get(
       return res.status(401).json({ message: "Unauthorized" });
     }
   },
-  // (err, req, res, next) => {
-  //   if (err.name === "UnauthorizedError") {
-  //     return res.status(401).json({ message: "Unauthorized" });
-  //   }
-  //   next(err);
-  // },
 );
 
 module.exports = router;

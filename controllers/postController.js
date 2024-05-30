@@ -5,15 +5,19 @@ const { body, validationResult } = require("express-validator");
 
 //GET request for all posts
 exports.posts_list = asyncHandler(async (req, res, next) => {
-  const posts = await Post.find({}).sort({ date: 1 }).exec();
-
+  const posts = await Post.find({ published: true })
+    .select("title text author date category")
+    .populate("author")
+    .sort({ date: 1 })
+    .exec();
   res.json(posts);
 });
 
 //GET request for single post
 exports.posts_detail = asyncHandler(async (req, res, next) => {
-  const post = await Post.findById(req.params.postID).populate("user").exec();
-  res.json(post);
+  const post = await Post.findById(req.params.postID).populate("author").exec();
+  const comments = await Comment.find({ _id: { $in: post.comments } }).populate("author");
+  res.json({post, comments});
 });
 
 //POST request to create single post
@@ -30,6 +34,7 @@ exports.posts_create = [
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
 
+    //req.body invalid
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
@@ -57,11 +62,13 @@ exports.posts_create = [
 exports.posts_delete = [
   asyncHandler(async (req, res, next) => {
     try {
+      //Delete post
       const post = await Post.findByIdAndDelete(req.params.postID);
       if (!post) {
         return res.status(404).json({ message: "Post not found" });
       }
 
+      //Delete all comments from post
       await Comment.deleteMany({ _id: { $in: post.comments } });
 
       res.json({ message: "Post Deleted" });
@@ -85,6 +92,7 @@ exports.posts_update = [
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
 
+    //req.body invalid
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
