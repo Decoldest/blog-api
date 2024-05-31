@@ -1,36 +1,27 @@
 var express = require("express");
-var posts = express.Router();
+var admin = express.Router();
 const postController = require("../controllers/postController");
 const User = require("../models/user");
 const Post = require("../models/post");
 const { authenticateJWT } = require("../config/passport");
 
-/* GET posts page. */
-posts.get("/", postController.posts_list);
-
-/* GET single post page. */
-posts.get("/:postID", postController.posts_detail);
-
-posts.post("/", authenticateJWT, postController.posts_create);
-
-posts.put(
-  "/:postID",
+admin.get(
+  "/",
   authenticateJWT,
   async (req, res, next) => {
     verifyIsPostAuthorOrAdmin(req, res, next);
   },
-  postController.posts_update,
+  postController.posts_list_admin,
 );
 
-posts.delete(
-  "/:postID",
+admin.put(
+  "/publish/:postID",
   authenticateJWT,
   async (req, res, next) => {
     verifyIsPostAuthorOrAdmin(req, res, next);
   },
-  postController.posts_delete,
+  postController.posts_publish_admin,
 );
-
 
 const mongoose = require("mongoose");
 
@@ -75,4 +66,4 @@ async function verifyIsAdmin(userID) {
   return user.isAdmin;
 }
 
-module.exports = posts;
+module.exports = admin;
