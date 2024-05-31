@@ -49,6 +49,7 @@ exports.posts_create = [
         author: req.body.author,
         comments: [],
         published: req.body.published,
+        category: req.body.category,
         date: new Date(),
       });
 
