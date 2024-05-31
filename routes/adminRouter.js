@@ -9,7 +9,12 @@ admin.get(
   "/",
   authenticateJWT,
   async (req, res, next) => {
-    verifyIsPostAuthorOrAdmin(req, res, next);
+    const [userID] = [req.user._id];
+    if (await verifyIsAdmin(userID)) {
+      next(); //Authorized
+    } else {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
   },
   postController.posts_list_admin,
 );

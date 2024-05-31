@@ -6,7 +6,6 @@ const { body, validationResult } = require("express-validator");
 //GET request for all posts
 exports.posts_list = asyncHandler(async (req, res, next) => {
   const posts = await Post.find({ published: true })
-    .select("title text author date category")
     .populate("author")
     .sort({ date: 1 })
     .exec();
@@ -126,7 +125,6 @@ exports.posts_update = [
 //For admin posts, include unpublished
 exports.posts_list_admin = asyncHandler(async (req, res, next) => {
   const posts = await Post.find()
-    .select("title text author date category")
     .populate("author")
     .sort({ date: 1 })
     .exec();
