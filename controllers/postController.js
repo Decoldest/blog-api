@@ -16,8 +16,10 @@ exports.posts_list = asyncHandler(async (req, res, next) => {
 //GET request for single post
 exports.posts_detail = asyncHandler(async (req, res, next) => {
   const post = await Post.findById(req.params.postID).populate("author").exec();
-  const comments = await Comment.find({ _id: { $in: post.comments } }).populate("author");
-  res.json({post, comments});
+  const comments = await Comment.find({ _id: { $in: post.comments } }).populate(
+    "author",
+  );
+  res.json({ post, comments });
 });
 
 //POST request to create single post
@@ -46,7 +48,7 @@ exports.posts_create = [
         text: req.body.text,
         author: req.body.author,
         comments: [],
-        published: false,
+        published: req.body.published,
         date: new Date(),
       });
 
@@ -119,3 +121,37 @@ exports.posts_update = [
     }
   }),
 ];
+
+//For admin posts, include unpublished
+exports.posts_list_admin = asyncHandler(async (req, res, next) => {
+  const posts = await Post.find()
+    .select("title text author date category")
+    .populate("author")
+    .sort({ date: 1 })
+    .exec();
+  res.json(posts);
+});
+
+//Allow admin to publish post
+exports.posts_publish_admin = asyncHandler(async (req, res, next) => {
+  try {
+    const { published } = req.body;
+    const { postID } = req.params;
+
+    const updatedPost = await Post.findByIdAndUpdate(
+      postID,
+      { published },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+    if (!updatedPost) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    res.json({ message: "Published post", updatedPost });
+  } catch (error) {
+    res.status(500).json({ message: "Error Publishing post", error });
+  }
+});

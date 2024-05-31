@@ -32,6 +32,26 @@ posts.delete(
   postController.posts_delete,
 );
 
+posts.get(
+  "/admin",
+  authenticateJWT,
+  async (req, res, next) => {
+    const [userID] = [req.user._id];
+    verifyIsAdmin(userID);
+  },
+  postController.posts_list_admin,
+);
+
+posts.post(
+  "/admin/publish",
+  authenticateJWT,
+  async (req, res, next) => {
+    const [userID] = [req.user._id];
+    verifyIsAdmin(userID);
+  },
+  postController.posts_publish_admin,
+);
+
 const mongoose = require("mongoose");
 
 //Check authorization for updating/deleting; calls next only if user is author or admin
@@ -54,7 +74,7 @@ async function verifyIsPostAuthorOrAdmin(req, res, next) {
 
     if (
       (await verifyIsAuthor(userID.toString(), authorID)) ||
-      (await verifyIsAdmin())
+      (await verifyIsAdmin(userID))
     ) {
       next(); //Authorized
     } else {
