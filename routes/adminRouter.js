@@ -11,7 +11,7 @@ admin.get(
   async (req, res, next) => {
     const [userID] = [req.user._id];
     if (await verifyIsAdmin(userID)) {
-      next(); //Authorized
+      next();
     } else {
       return res.status(403).json({ message: "Unauthorized" });
     }
